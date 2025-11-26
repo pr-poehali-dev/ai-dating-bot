@@ -88,8 +88,33 @@ const Index = () => {
   const [selectedGirl, setSelectedGirl] = useState<Girl | null>(null);
   const [showChat, setShowChat] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [userSubscription, setUserSubscription] = useState<{
+    flirt: boolean;
+    intimate: boolean;
+  }>({ flirt: false, intimate: false });
+  const [userId] = useState('user_' + Date.now());
 
-  const handleOpenChat = (girl: Girl) => {
+  const checkSubscription = async (userId: string) => {
+    try {
+      const response = await fetch(
+        `https://functions.poehali.dev/cf396c07-c7d0-4bd3-918b-a3cec4f9930a?user_id=${userId}`
+      );
+      const data = await response.json();
+      
+      setUserSubscription({
+        flirt: data.flirt || false,
+        intimate: data.intimate || false,
+      });
+      
+      return data;
+    } catch (error) {
+      console.error('Subscription check error:', error);
+      return { flirt: false, intimate: false };
+    }
+  };
+
+  const handleOpenChat = async (girl: Girl) => {
+    await checkSubscription(userId);
     setSelectedGirl(girl);
     setShowChat(true);
   };
@@ -111,7 +136,7 @@ const Index = () => {
         body: JSON.stringify({
           plan_type: planType,
           amount: amount,
-          user_id: 'user_' + Date.now(),
+          user_id: userId,
         }),
       });
 
@@ -460,7 +485,11 @@ const Index = () => {
       </div>
 
       {showChat && selectedGirl && (
-        <ChatInterface girl={selectedGirl} onClose={handleCloseChat} />
+        <ChatInterface 
+          girl={selectedGirl} 
+          onClose={handleCloseChat} 
+          userSubscription={userSubscription}
+        />
       )}
     </div>
   );

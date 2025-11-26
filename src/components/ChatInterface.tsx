@@ -34,6 +34,10 @@ interface Message {
 interface ChatInterfaceProps {
   girl: Girl;
   onClose: () => void;
+  userSubscription?: {
+    flirt: boolean;
+    intimate: boolean;
+  };
 }
 
 const getLevelInfo = (level: number, messagesCount: number) => {
@@ -117,7 +121,7 @@ const getAIResponse = (
   };
 };
 
-const ChatInterface = ({ girl, onClose }: ChatInterfaceProps) => {
+const ChatInterface = ({ girl, onClose, userSubscription = { flirt: false, intimate: false } }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -152,18 +156,22 @@ const ChatInterface = ({ girl, onClose }: ChatInterfaceProps) => {
 
   useEffect(() => {
     if (currentMessagesCount >= 20 && currentLevel === 0) {
-      setCurrentLevel(1);
-      setPersonaUnlocked(true);
-      addSystemMessage('🎉 Новый уровень! Теперь доступна функция "Две персоны"');
+      if (userSubscription.flirt) {
+        setCurrentLevel(1);
+        setPersonaUnlocked(true);
+        addSystemMessage('🎉 Новый уровень! Теперь доступна функция "Две персоны"');
+      } else {
+        setShowNSFWWarning(true);
+      }
     } else if (currentMessagesCount >= 50 && currentLevel === 1) {
-      if (girl.unlocked) {
+      if (userSubscription.intimate && girl.unlocked) {
         setCurrentLevel(2);
         addSystemMessage('🔥 Максимальный уровень близости! NSFW контент разблокирован');
       } else {
         setShowNSFWWarning(true);
       }
     }
-  }, [currentMessagesCount, currentLevel, girl.unlocked]);
+  }, [currentMessagesCount, currentLevel, girl.unlocked, userSubscription]);
 
   const addSystemMessage = (text: string) => {
     const systemMessage: Message = {
@@ -177,6 +185,11 @@ const ChatInterface = ({ girl, onClose }: ChatInterfaceProps) => {
 
   const handleRequestPhoto = async () => {
     if (currentLevel < 2) {
+      setShowNSFWWarning(true);
+      return;
+    }
+
+    if (!userSubscription.intimate) {
       setShowNSFWWarning(true);
       return;
     }
