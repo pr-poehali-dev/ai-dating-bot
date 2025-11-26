@@ -1,0 +1,33 @@
+{
+  "tests": [
+    {
+      "name": "Test AI chat response generation",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "girl_id": "emma",
+        "user_message": "Hi! How are you?",
+        "conversation_history": [],
+        "persona_prompt": "You are Emma, a friendly and flirty AI girlfriend. You love to chat and make people smile."
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "response": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test missing required fields",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "girl_id": "emma"
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
