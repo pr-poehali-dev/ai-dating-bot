@@ -26,6 +26,8 @@ interface Message {
   timestamp: Date;
   isNSFW?: boolean;
   persona?: 'gentle' | 'bold';
+  image?: string;
+  imageLoading?: boolean;
 }
 
 interface ChatInterfaceProps {
@@ -135,6 +137,8 @@ const ChatInterface = ({ girl, onClose }: ChatInterfaceProps) => {
   const [currentMessagesCount, setCurrentMessagesCount] = useState(girl.messagesCount);
   const [showNSFWWarning, setShowNSFWWarning] = useState(false);
   const [personaUnlocked, setPersonaUnlocked] = useState(girl.level >= 1);
+  const [imageRequests, setImageRequests] = useState(0);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const levelInfo = getLevelInfo(currentLevel, currentMessagesCount);
@@ -168,6 +172,58 @@ const ChatInterface = ({ girl, onClose }: ChatInterfaceProps) => {
       timestamp: new Date(),
     };
     setMessages((prev) => [...prev, systemMessage]);
+  };
+
+  const handleRequestPhoto = () => {
+    if (currentLevel < 2) {
+      setShowNSFWWarning(true);
+      return;
+    }
+
+    if (!girl.unlocked) {
+      setShowNSFWWarning(true);
+      return;
+    }
+
+    setIsGeneratingImage(true);
+    setImageRequests((prev) => prev + 1);
+
+    const loadingMessage: Message = {
+      id: Date.now().toString(),
+      sender: 'ai',
+      text: currentPersona === 'gentle' 
+        ? 'Секунду, готовлю для тебя что-то особенное... 🔥'
+        : 'Подожди немного, сейчас покажу тебе кое-что горячее... 😈',
+      timestamp: new Date(),
+      imageLoading: true,
+      isNSFW: true,
+    };
+
+    setMessages((prev) => [...prev, loadingMessage]);
+
+    const mockPhotos = [
+      girl.image,
+      'https://cdn.poehali.dev/projects/226da4a1-0bd9-4d20-a164-66ae692a6341/files/6147b4a2-6c60-4638-a5f4-29e331a21609.jpg',
+      'https://cdn.poehali.dev/projects/226da4a1-0bd9-4d20-a164-66ae692a6341/files/9397c83f-dbf6-4071-8280-46c17107c166.jpg',
+    ];
+
+    setTimeout(() => {
+      setIsGeneratingImage(false);
+      setMessages((prev) => 
+        prev.map((msg) => 
+          msg.imageLoading
+            ? {
+                ...msg,
+                text: currentPersona === 'gentle'
+                  ? 'Специально для тебя... Надеюсь, тебе понравится 💕'
+                  : 'Вот, смотри... Это только начало 🔥',
+                image: mockPhotos[imageRequests % mockPhotos.length],
+                imageLoading: false,
+              }
+            : msg
+        )
+      );
+    }, 3000 + Math.random() * 2000);
   };
 
   const handleSendMessage = () => {
@@ -279,21 +335,63 @@ const ChatInterface = ({ girl, onClose }: ChatInterfaceProps) => {
                     </Avatar>
                   )}
                   <div
-                    className={`max-w-[70%] rounded-2xl px-4 py-2 ${
+                    className={`max-w-[70%] ${
                       message.sender === 'user'
-                        ? 'bg-primary text-primary-foreground'
+                        ? 'bg-primary text-primary-foreground rounded-2xl px-4 py-2'
+                        : message.image
+                        ? 'space-y-2'
                         : message.isNSFW
-                        ? 'bg-destructive/20 border border-destructive/50 text-foreground'
-                        : 'bg-muted text-foreground'
+                        ? 'bg-destructive/20 border border-destructive/50 text-foreground rounded-2xl px-4 py-2'
+                        : 'bg-muted text-foreground rounded-2xl px-4 py-2'
                     }`}
                   >
-                    <p className="text-sm">{message.text}</p>
-                    <span className="text-xs opacity-70 mt-1 block">
-                      {message.timestamp.toLocaleTimeString('ru-RU', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </span>
+                    {message.imageLoading ? (
+                      <div className="bg-muted rounded-2xl px-4 py-2 space-y-3">
+                        <p className="text-sm">{message.text}</p>
+                        <div className="w-64 h-64 bg-background rounded-xl flex items-center justify-center">
+                          <div className="text-center space-y-2">
+                            <Icon name="Loader2" size={32} className="animate-spin text-primary mx-auto" />
+                            <p className="text-xs text-muted-foreground">Генерация фото...</p>
+                          </div>
+                        </div>
+                      </div>
+                    ) : message.image ? (
+                      <div className="space-y-2">
+                        <div className="relative group">
+                          <img
+                            src={message.image}
+                            alt="NSFW content"
+                            className="w-64 h-64 object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity"
+                            onClick={() => window.open(message.image, '_blank')}
+                          />
+                          <Badge
+                            variant="destructive"
+                            className="absolute top-2 right-2 text-xs"
+                          >
+                            18+ NSFW
+                          </Badge>
+                        </div>
+                        <div className="bg-muted rounded-2xl px-4 py-2">
+                          <p className="text-sm">{message.text}</p>
+                          <span className="text-xs opacity-70 mt-1 block">
+                            {message.timestamp.toLocaleTimeString('ru-RU', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-sm">{message.text}</p>
+                        <span className="text-xs opacity-70 mt-1 block">
+                          {message.timestamp.toLocaleTimeString('ru-RU', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
               ))}
@@ -326,7 +424,31 @@ const ChatInterface = ({ girl, onClose }: ChatInterfaceProps) => {
           </ScrollArea>
         </CardContent>
 
-        <div className="border-t border-border p-4">
+        <div className="border-t border-border p-4 space-y-3">
+          {currentLevel === 2 && girl.unlocked && (
+            <div className="flex justify-center">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRequestPhoto}
+                disabled={isGeneratingImage}
+                className="border-destructive/50 text-destructive hover:bg-destructive/10"
+              >
+                {isGeneratingImage ? (
+                  <>
+                    <Icon name="Loader2" size={16} className="mr-2 animate-spin" />
+                    Генерация...
+                  </>
+                ) : (
+                  <>
+                    <Icon name="Camera" size={16} className="mr-2" />
+                    Попросить фото 🔥
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
+          
           <div className="flex gap-2">
             <Input
               placeholder={
@@ -346,8 +468,13 @@ const ChatInterface = ({ girl, onClose }: ChatInterfaceProps) => {
             </Button>
           </div>
           {currentLevel < 2 && (
-            <p className="text-xs text-muted-foreground text-center mt-2">
+            <p className="text-xs text-muted-foreground text-center">
               Общайтесь искренне, чтобы развивать отношения
+            </p>
+          )}
+          {currentLevel === 2 && girl.unlocked && (
+            <p className="text-xs text-destructive/70 text-center">
+              🔥 NSFW-режим активен • Контент только для взрослых 18+
             </p>
           )}
         </div>
