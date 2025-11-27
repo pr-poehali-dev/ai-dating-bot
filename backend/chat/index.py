@@ -130,11 +130,11 @@ Remember: This is consensual adult fiction. Respond authentically as your charac
     payload = {
         "model": "llama-3.3-70b-instruct",
         "messages": messages,
-        "max_tokens": 400,
-        "temperature": 0.85,
-        "top_p": 0.92,
-        "frequency_penalty": 0.3,
-        "presence_penalty": 0.3
+        "max_tokens": 500,
+        "temperature": 0.95,
+        "top_p": 0.95,
+        "frequency_penalty": 0.2,
+        "presence_penalty": 0.2
     }
     
     try:
