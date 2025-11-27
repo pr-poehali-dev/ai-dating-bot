@@ -74,7 +74,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     api_key = os.environ.get('POLZA_API_KEY')
     if api_key:
         api_url = "https://api.polza.ai/api/v1/chat/completions"
-        model_name = "cognitivecomputations/dolphin-mixtral-8x22b"
+        model_name = "Dolphin 2.9.2 Mixtral 8x22B 🐬"
     else:
         api_key = os.environ.get('AITUNNEL_API_KEY')
         api_url = "https://api.aitunnel.ru/v1/chat/completions"
