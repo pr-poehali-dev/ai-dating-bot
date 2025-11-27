@@ -73,7 +73,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     # Try Polza API first (Dolphin uncensored), fallback to AITunnel
     api_key = os.environ.get('POLZA_API_KEY')
     if api_key:
-        api_url = "https://api.polza.ai/v1/chat/completions"
+        api_url = "https://api.polza.ai/api/v1/chat/completions"
         model_name = "dolphin-mixtral-8x22b"
     else:
         api_key = os.environ.get('AITUNNEL_API_KEY')
