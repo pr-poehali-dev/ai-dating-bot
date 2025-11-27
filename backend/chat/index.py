@@ -78,7 +78,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         # Use OpenAI SDK with Polza base URL (correct way per docs)
         openai.api_base = "https://api.polza.ai/api/v1"
         openai.api_key = polza_key
-        model_name = "openai/gpt-4o"  # Will test with available model first
+        model_name = "deepseek/deepseek-chat-v3.1"  # DeepSeek v3.1 - less censorship than Western models
         use_polza = True
     elif aitunnel_key:
         openai.api_base = "https://api.aitunnel.ru/v1"
