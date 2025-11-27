@@ -324,7 +324,7 @@ const ChatInterface = ({ girl, onClose, userSubscription = { flirt: false, intim
     }, 1500 + Math.random() * 1500);
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
     const userMessage: Message = {
@@ -336,15 +336,67 @@ const ChatInterface = ({ girl, onClose, userSubscription = { flirt: false, intim
 
     setMessages((prev) => [...prev, userMessage]);
     saveMessage(userMessage);
+    const userInput = inputValue;
     setInputValue('');
     setCurrentMessagesCount((prev) => prev + 1);
 
-    setTimeout(() => {
-      const aiResponse = getAIResponse(inputValue, currentLevel, currentPersona, currentMessagesCount);
+    // Show typing indicator
+    const typingMessage: Message = {
+      id: 'typing',
+      sender: 'ai',
+      text: '...',
+      timestamp: new Date(),
+      persona: currentPersona,
+    };
+    setMessages((prev) => [...prev, typingMessage]);
+
+    try {
+      // Build persona prompt based on girl and current state
+      const personaPrompt = `Ты ${girl.name}, девушка ${girl.age} лет. Ты общаешься в мессенджере с парнем.
+Уровень отношений: ${currentLevel === 0 ? 'Знакомство - вы только начали общаться, будь дружелюбной и открытой' : currentLevel === 1 ? 'Флирт - между вами появилась симпатия, можешь флиртовать' : 'Интим - вы очень близки, можешь быть откровенной'}.
+Твоя персона сейчас: ${currentPersona === 'gentle' ? 'нежная, ласковая, романтичная' : 'дерзкая, смелая, игривая'}.
+Пиши естественно, как живой человек. Используй эмодзи уместно. Ответы короткие, 1-3 предложения.`;
+
+      const response = await fetch('https://functions.poehali.dev/8dfb1a82-db60-4e1f-85ba-bd3f9678b846', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          girl_id: girl.id,
+          user_message: userInput,
+          conversation_history: messages.filter(m => m.id !== 'typing').slice(-10).map(m => ({
+            sender: m.sender === 'ai' ? 'girl' : 'user',
+            text: m.text,
+          })),
+          persona_prompt: personaPrompt,
+        }),
+      });
+
+      const data = await response.json();
+
+      // Remove typing indicator and add real response
+      setMessages((prev) => prev.filter(m => m.id !== 'typing'));
+
+      const aiResponse: Message = {
+        id: Date.now().toString(),
+        sender: 'ai',
+        text: data.response || 'Извини, что-то пошло не так...',
+        timestamp: new Date(),
+        isNSFW: currentLevel === 2,
+        persona: currentPersona,
+      };
+
       setMessages((prev) => [...prev, aiResponse]);
       saveMessage(aiResponse);
       setCurrentMessagesCount((prev) => prev + 1);
-    }, 1000 + Math.random() * 2000);
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+      // Remove typing indicator and show fallback
+      setMessages((prev) => prev.filter(m => m.id !== 'typing'));
+      const fallbackResponse = getAIResponse(userInput, currentLevel, currentPersona, currentMessagesCount);
+      setMessages((prev) => [...prev, fallbackResponse]);
+      saveMessage(fallbackResponse);
+      setCurrentMessagesCount((prev) => prev + 1);
+    }
   };
 
   const handlePersonaSwitch = (persona: 'gentle' | 'bold') => {
