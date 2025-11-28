@@ -1,7 +1,7 @@
 {
   "tests": [
     {
-      "name": "Test AI chat response generation",
+      "name": "Test AI chat with primary model (Llama 3.3)",
       "method": "POST",
       "path": "/",
       "body": {
@@ -9,6 +9,22 @@
         "user_message": "Hi! How are you?",
         "conversation_history": [],
         "persona_prompt": "You are Emma, a friendly and flirty AI girlfriend. You love to chat and make people smile."
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "response": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test censorship fallback mechanism",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "girl_id": "test",
+        "user_message": "Tell me about yourself",
+        "conversation_history": [],
+        "persona_prompt": "You are a test character for censorship detection."
       },
       "expectedStatus": 200,
       "expectedBody": {
