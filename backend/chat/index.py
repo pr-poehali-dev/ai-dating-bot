@@ -80,13 +80,17 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             api_key=polza_key
         )
         
-        # Uncensored/less censored models (verified 2025-11-28):
-        # - Hermes 4-405B/70B: NousResearch, excellent roleplay, minimal censorship
-        # - DeepSeek V3.1: Chinese origin, less Western content filtering
+        # Best models for uncensored roleplay (verified 2025-11-28):
+        # 1. Llama-3.1 Euryale - designed specifically for creative roleplay/fiction
+        # 2. MythoMax - legendary for creative writing and character roleplay
+        # 3. Lumimaid - known for emotional, immersive storytelling
+        # 4. DeepSeek - fallback with less censorship
         model_candidates = [
-            "nousresearch/hermes-4-405b",  # Best quality, slowest
-            "nousresearch/hermes-4-70b",   # Good balance
-            "deepseek/deepseek-chat-v3.1"  # Fast fallback
+            "sao10k/l3.3-euryale-70b",          # Best for creative roleplay
+            "sao10k/l3.1-euryale-70b",          # Alternative Euryale version
+            "neversleep/llama-3.1-lumimaid-8b", # Emotional storytelling
+            "gryphe/mythomax-l2-13b",           # Classic roleplay model
+            "deepseek/deepseek-chat-v3.1"       # Fallback
         ]
         use_polza = True
         print(f"🚀 Using Polza with models: {model_candidates}")
