@@ -59,6 +59,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     conversation_history = body_data.get('conversation_history', [])
     persona_prompt = body_data.get('persona_prompt', '')
     
+    print(f"📥 REQUEST: girl_id={girl_id}, user_message_len={len(user_message) if user_message else 0}, history_len={len(conversation_history)}")
+    
     if not girl_id or not user_message:
         return {
             'statusCode': 400,
