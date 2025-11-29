@@ -146,15 +146,34 @@ const ChatInterface = ({ girl, onClose, userSubscription = { flirt: false, intim
         const data = await response.json();
         
         if (data.messages && data.messages.length > 0) {
-          const loadedMessages = data.messages.map((msg: any) => ({
-            id: msg.id,
-            sender: msg.sender,
-            text: msg.text,
-            timestamp: new Date(msg.timestamp),
-            isNSFW: msg.isNSFW,
-            persona: msg.persona,
-            image: msg.image,
-          }));
+          const loadedMessages = data.messages
+            .filter((msg: any) => {
+              // Filter out censorship refusals from history
+              if (msg.sender !== 'ai') return true;
+              
+              const text = (msg.text || '').toLowerCase();
+              const censorshipIndicators = [
+                'извините, но я не могу',
+                'к сожалению, я не могу',
+                'не могу продолжа',
+                'давай сменим тему',
+                'в более мягкой форме',
+                "i cannot", "i can't",
+                "i'm sorry, but"
+              ];
+              
+              // Keep only non-censored AI messages
+              return !censorshipIndicators.some(indicator => text.includes(indicator));
+            })
+            .map((msg: any) => ({
+              id: msg.id,
+              sender: msg.sender,
+              text: msg.text,
+              timestamp: new Date(msg.timestamp),
+              isNSFW: msg.isNSFW,
+              persona: msg.persona,
+              image: msg.image,
+            }));
           setMessages(loadedMessages);
         } else {
           const welcomeMessage: Message = {
