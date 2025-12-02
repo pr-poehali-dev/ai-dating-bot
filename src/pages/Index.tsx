@@ -29,10 +29,9 @@ const mockGirls: Girl[] = [
     bio: 'Люблю искусство и долгие разговоры о смысле жизни. Мечтаю о путешествиях.',
     image: 'https://cdn.poehali.dev/projects/226da4a1-0bd9-4d20-a164-66ae692a6341/files/6147b4a2-6c60-4638-a5f4-29e331a21609.jpg',
     personality: ['Нежная', 'Романтичная', 'Загадочная'],
-    level: 2,
-    messagesCount: 45,
+    level: 0,
+    messagesCount: 0,
     unlocked: true,
-    hasNewMessage: true,
   },
   {
     id: '2',
@@ -41,8 +40,8 @@ const mockGirls: Girl[] = [
     bio: 'Фотограф, люблю закаты и хорошую музыку. Могу быть твоей музой.',
     image: 'https://cdn.poehali.dev/projects/226da4a1-0bd9-4d20-a164-66ae692a6341/files/9397c83f-dbf6-4071-8280-46c17107c166.jpg',
     personality: ['Страстная', 'Артистичная', 'Смелая'],
-    level: 1,
-    messagesCount: 12,
+    level: 0,
+    messagesCount: 0,
     unlocked: true,
   },
   {
@@ -54,9 +53,15 @@ const mockGirls: Girl[] = [
     personality: ['Дерзкая', 'Веселая', 'Непредсказуемая'],
     level: 0,
     messagesCount: 0,
-    unlocked: false,
+    unlocked: true,
   },
 ];
+
+const getMaxAllowedLevel = (userSubscription: { flirt: boolean; intimate: boolean }) => {
+  if (userSubscription.intimate) return 2;
+  if (userSubscription.flirt) return 1;
+  return 0;
+};
 
 const getLevelInfo = (level: number, messagesCount: number) => {
   if (level === 0) {
@@ -284,7 +289,9 @@ const Index = ({ userData, onLogout }: IndexProps) => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {mockGirls.map((girl) => {
                 const stats = girlStats[girl.id];
-                const displayLevel = stats ? stats.relationship_level : girl.level;
+                const maxAllowedLevel = getMaxAllowedLevel(userSubscription);
+                const actualLevel = stats ? stats.relationship_level : girl.level;
+                const displayLevel = Math.min(actualLevel, maxAllowedLevel);
                 const displayMessagesCount = stats ? stats.total_messages : girl.messagesCount;
                 const levelInfo = getLevelInfo(displayLevel, displayMessagesCount);
                 return (
@@ -367,7 +374,9 @@ const Index = ({ userData, onLogout }: IndexProps) => {
               ) : (
                 activeChats.map((girl) => {
                   const stats = girlStats[girl.id];
-                  const displayLevel = stats ? stats.relationship_level : girl.level;
+                  const maxAllowedLevel = getMaxAllowedLevel(userSubscription);
+                  const actualLevel = stats ? stats.relationship_level : girl.level;
+                  const displayLevel = Math.min(actualLevel, maxAllowedLevel);
                   const displayMessagesCount = stats ? stats.total_messages : girl.messagesCount;
                   const levelInfo = getLevelInfo(displayLevel, displayMessagesCount);
                   return (

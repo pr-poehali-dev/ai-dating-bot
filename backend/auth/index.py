@@ -302,11 +302,30 @@ def handle_check_subscription(params: Dict[str, str]) -> Dict[str, Any]:
     if not user_id:
         return error_response(400, 'Missing user_id parameter')
     
-    result = {'user_id': user_id, 'has_subscription': False, 'subscription_type': None, 'subscription_end': None, 'purchased_girls': [], 'has_all_girls': False}
+    result = {
+        'user_id': user_id, 
+        'has_subscription': False, 
+        'subscription_type': None, 
+        'subscription_end': None, 
+        'purchased_girls': [], 
+        'has_all_girls': False,
+        'flirt': False,
+        'intimate': False
+    }
     
     try:
         conn = get_db_connection()
         cur = conn.cursor()
+        
+        cur.execute(
+            "SELECT flirt, intimate FROM t_p77610913_ai_dating_bot.subscriptions WHERE user_id = %s",
+            (user_id,)
+        )
+        subscription_features = cur.fetchone()
+        
+        if subscription_features:
+            result['flirt'] = subscription_features[0] or False
+            result['intimate'] = subscription_features[1] or False
         
         cur.execute(
             "SELECT subscription_type, end_date FROM t_p77610913_ai_dating_bot.subscriptions WHERE user_id = %s AND is_active = TRUE AND end_date > CURRENT_TIMESTAMP ORDER BY end_date DESC LIMIT 1",
