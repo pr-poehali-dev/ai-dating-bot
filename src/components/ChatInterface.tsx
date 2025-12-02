@@ -392,24 +392,16 @@ ${currentPersona === 'gentle' ? 'Ты страстная, но нежная лю
 Ответы 2-4 предложения, эмодзи 🔥💦😈. Веди себя как настоящая девушка в интимной переписке.`;
       }
 
-      // Call Yandex Cloud Function with 3-tier fallback
-      const conversationHistory = messages
-        .filter(m => m.id !== 'typing')
-        .slice(-10)
-        .map(m => ({
-          role: m.sender === 'ai' ? 'assistant' : 'user',
-          content: m.text,
-        }));
-
       const response = await fetch('https://functions.poehali.dev/8dfb1a82-db60-4e1f-85ba-bd3f9678b846', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           girl_id: girl.id,
           user_message: userInput,
-          conversation_history: conversationHistory,
+          conversation_history: messages.filter(m => m.id !== 'typing').slice(-10).map(m => ({
+            sender: m.sender === 'ai' ? 'girl' : 'user',
+            text: m.text,
+          })),
           persona_prompt: personaPrompt,
         }),
       });
@@ -486,7 +478,7 @@ ${currentPersona === 'gentle' ? 'Ты страстная, но нежная лю
             </Button>
           </div>
 
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Прогресс отношений</span>
               <span className="text-muted-foreground">{levelInfo.description}</span>
