@@ -207,7 +207,11 @@ const Index = ({ userData, onLogout }: IndexProps) => {
                 1
               </Badge>
             </TabsTrigger>
-            <TabsTrigger value="profile" className="flex items-center gap-2">
+            <TabsTrigger 
+              value="profile" 
+              className="flex items-center gap-2"
+              onClick={() => window.location.href = '/profile'}
+            >
               <Icon name="User" size={18} />
               Профиль
             </TabsTrigger>
