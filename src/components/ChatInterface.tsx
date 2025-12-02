@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Icon from '@/components/ui/icon';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { girlsPhotos } from '@/data/girlsPhotos';
+import DeleteChatDialog from '@/components/DeleteChatDialog';
 
 interface Girl {
   id: string;
@@ -134,6 +135,7 @@ const ChatInterface = ({ girl, onClose, userSubscription = { flirt: false, intim
   const [personaUnlocked, setPersonaUnlocked] = useState(girl.level >= 1);
   const [imageRequests, setImageRequests] = useState(0);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const levelInfo = getLevelInfo(currentLevel, currentMessagesCount);
@@ -480,11 +482,7 @@ ${currentPersona === 'gentle' ? 'Ты страстная, но нежная лю
                 <Button 
                   variant="ghost" 
                   size="icon"
-                  onClick={() => {
-                    if (confirm(`Удалить всю историю переписки с ${girl.name}?`)) {
-                      onDeleteChat(girl.id);
-                    }
-                  }}
+                  onClick={() => setShowDeleteDialog(true)}
                   title="Удалить диалог"
                 >
                   <Icon name="Trash2" size={20} className="text-destructive" />
@@ -684,6 +682,18 @@ ${currentPersona === 'gentle' ? 'Ты страстная, но нежная лю
           )}
         </div>
       </Card>
+
+      {onDeleteChat && (
+        <DeleteChatDialog
+          isOpen={showDeleteDialog}
+          girlName={girl.name}
+          onConfirm={() => {
+            setShowDeleteDialog(false);
+            onDeleteChat(girl.id);
+          }}
+          onCancel={() => setShowDeleteDialog(false)}
+        />
+      )}
     </div>
   );
 };
