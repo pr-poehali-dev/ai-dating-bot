@@ -500,7 +500,7 @@ const Index = ({ userData, onLogout }: IndexProps) => {
                       </Badge>
                       <Icon name="Crown" size={24} className="text-primary" />
                     </div>
-                    <h3 className="text-2xl font-heading font-bold mb-2">Флирт</h3>
+                    <h3 className="text-2xl font-heading font-bold mb-2">Флирт </h3>
                     <div className="mb-4">
                       <span className="text-4xl font-bold">490₽</span>
                       <span className="text-muted-foreground">/месяц</span>
@@ -508,11 +508,11 @@ const Index = ({ userData, onLogout }: IndexProps) => {
                     <ul className="space-y-3 mb-6">
                       <li className="flex items-start gap-2">
                         <Icon name="Check" size={20} className="text-primary mt-0.5" />
-                        <span className="text-sm">Неограниченное общение до уровня 2</span>
+                        <span className="text-sm">Для тех, кто хочет попробовать</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <Icon name="Check" size={20} className="text-primary mt-0.5" />
-                        <span className="text-sm">Функция "Две персоны"</span>
+                        <span className="text-sm">50 сообщений</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <Icon name="Check" size={20} className="text-primary mt-0.5" />
@@ -554,15 +554,15 @@ const Index = ({ userData, onLogout }: IndexProps) => {
                       </li>
                       <li className="flex items-start gap-2">
                         <Icon name="Check" size={20} className="text-primary mt-0.5" />
-                        <span className="text-sm">🔥 NSFW контент без ограничений</span>
+                        <span className="text-sm">🔥 Возможность попросить фото</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <Icon name="Check" size={20} className="text-primary mt-0.5" />
-                        <span className="text-sm">Уровень 3 со всеми девушками</span>
+                        <span className="text-sm">Безлимитные сообщения</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <Icon name="Check" size={20} className="text-primary mt-0.5" />
-                        <span className="text-sm">Приоритетная поддержка</span>
+                        <span className="text-sm">NSWF без ограничений</span>
                       </li>
                     </ul>
                     <Button 
