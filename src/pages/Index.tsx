@@ -589,9 +589,7 @@ const Index = ({ userData, onLogout }: IndexProps) => {
                         <span className="font-medium">Одна девушка на  24  часа!</span>
                         <Badge>299₽</Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        Полный доступ к интимному общению с выбранной девушкой
-                      </p>
+                      <p className="text-sm text-muted-foreground">Полный доступ к безлимитному интимному общению с одной выбранной девушкой.</p>
                     </div>
                     <div className="bg-card p-4 rounded-lg cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSubscribe('all_girls', 799)}>
                       <div className="flex items-center justify-between mb-2">
