@@ -558,11 +558,11 @@ const Index = ({ userData, onLogout }: IndexProps) => {
                       </li>
                       <li className="flex items-start gap-2">
                         <Icon name="Check" size={20} className="text-primary mt-0.5" />
-                        <span className="text-sm">Безлимитные сообщения</span>
+                        <span className="text-sm">❤️  Безлимитные сообщения</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <Icon name="Check" size={20} className="text-primary mt-0.5" />
-                        <span className="text-sm">NSWF без ограничений</span>
+                        <span className="text-sm">👍 NSWF без ограничений</span>
                       </li>
                     </ul>
                     <Button 
