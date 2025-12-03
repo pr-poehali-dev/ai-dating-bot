@@ -148,6 +148,7 @@ const ChatInterface = ({ girl, onClose, userSubscription = { flirt: false, intim
   const [imageRequests, setImageRequests] = useState(0);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const levelInfo = getLevelInfo(currentLevel, currentMessagesCount);
@@ -362,7 +363,7 @@ const ChatInterface = ({ girl, onClose, userSubscription = { flirt: false, intim
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
     
-    if (userSubscription.can_send_message === false) {
+    if (isBlocked || userSubscription.can_send_message === false) {
       setShowNSFWWarning(true);
       return;
     }
@@ -432,6 +433,7 @@ ${currentPersona === 'gentle' ? 'Ты страстная, но нежная лю
       
       if (response.status === 403) {
         setMessages((prev) => prev.filter(m => m.id !== 'typing'));
+        setIsBlocked(true);
         setShowNSFWWarning(true);
         return;
       }
@@ -676,7 +678,7 @@ ${currentPersona === 'gentle' ? 'Ты страстная, но нежная лю
             </div>
           )}
           
-          {userSubscription.can_send_message === false && (
+          {(isBlocked || userSubscription.can_send_message === false) && (
             <div className="mb-2 p-3 bg-destructive/10 border border-destructive/50 rounded-lg">
               <div className="flex items-center gap-2 mb-1">
                 <Icon name="Lock" size={16} className="text-destructive" />
@@ -694,7 +696,7 @@ ${currentPersona === 'gentle' ? 'Ты страстная, но нежная лю
           <div className="flex gap-2">
             <Input
               placeholder={
-                userSubscription.can_send_message === false
+                (isBlocked || userSubscription.can_send_message === false)
                   ? 'Оформите подписку для продолжения...'
                   : currentLevel === 0
                   ? 'Познакомься с ней...'
@@ -704,14 +706,14 @@ ${currentPersona === 'gentle' ? 'Ты страстная, но нежная лю
               }
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              onKeyPress={(e) => e.key === 'Enter' && !isBlocked && handleSendMessage()}
               className="flex-1"
-              disabled={userSubscription.can_send_message === false}
+              disabled={isBlocked || userSubscription.can_send_message === false}
             />
             <Button 
               onClick={handleSendMessage} 
               size="icon" 
-              disabled={!inputValue.trim() || userSubscription.can_send_message === false}
+              disabled={!inputValue.trim() || isBlocked || userSubscription.can_send_message === false}
             >
               <Icon name="Send" size={20} />
             </Button>

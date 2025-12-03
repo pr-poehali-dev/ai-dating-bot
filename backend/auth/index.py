@@ -458,6 +458,19 @@ def handle_save_message(body_data: Dict[str, Any]) -> Dict[str, Any]:
             "INSERT INTO t_p77610913_ai_dating_bot.user_girl_stats (user_id, girl_id, total_messages, relationship_level, last_interaction) VALUES (%s, %s, 1, 0, NOW()) ON CONFLICT (user_id, girl_id) DO UPDATE SET total_messages = t_p77610913_ai_dating_bot.user_girl_stats.total_messages + 1, last_interaction = NOW()",
             (user_id, girl_id)
         )
+        
+        if sender == 'user':
+            cur.execute(
+                """
+                INSERT INTO t_p77610913_ai_dating_bot.user_message_stats (user_id, total_messages, updated_at)
+                VALUES (%s, 1, CURRENT_TIMESTAMP)
+                ON CONFLICT (user_id) DO UPDATE 
+                SET total_messages = t_p77610913_ai_dating_bot.user_message_stats.total_messages + 1,
+                    updated_at = CURRENT_TIMESTAMP
+                """,
+                (user_id,)
+            )
+        
         conn.commit()
         cur.close()
         conn.close()
