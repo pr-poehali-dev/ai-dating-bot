@@ -586,7 +586,7 @@ const Index = ({ userData, onLogout }: IndexProps) => {
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="bg-card p-4 rounded-lg cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSubscribe('one_girl', 299)}>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium">Одна девушка (NSFW)</span>
+                        <span className="font-medium">Одна девушка на  24  часа!</span>
                         <Badge>299₽</Badge>
                       </div>
                       <p className="text-sm text-muted-foreground">
@@ -595,12 +595,10 @@ const Index = ({ userData, onLogout }: IndexProps) => {
                     </div>
                     <div className="bg-card p-4 rounded-lg cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSubscribe('all_girls', 799)}>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium">Все девушки (NSFW)</span>
+                        <span className="font-medium">Все девушки на 1 день!</span>
                         <Badge>799₽</Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        Уровень 3 со всеми девушками навсегда
-                      </p>
+                      <p className="text-sm text-muted-foreground">Уровень "Интим" со всеми девушками на 24 часа.</p>
                     </div>
                   </div>
                 </CardContent>
