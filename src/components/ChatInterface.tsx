@@ -533,20 +533,7 @@ ${currentPersona === 'gentle' ? 'Ты страстная, но нежная лю
             )}
           </div>
 
-          {personaUnlocked && (
-            <Tabs value={currentPersona} onValueChange={(v) => handlePersonaSwitch(v as 'gentle' | 'bold')} className="mt-4">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="gentle" className="flex items-center gap-2">
-                  <Icon name="Heart" size={16} />
-                  Нежная
-                </TabsTrigger>
-                <TabsTrigger value="bold" className="flex items-center gap-2">
-                  <Icon name="Flame" size={16} />
-                  Дерзкая
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          )}
+
         </CardHeader>
 
         <CardContent className="flex-1 overflow-hidden p-0">
