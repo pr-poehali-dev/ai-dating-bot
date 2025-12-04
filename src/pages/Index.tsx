@@ -554,6 +554,10 @@ const Index = ({ userData, onLogout }: IndexProps) => {
                       <Link to="/offer" className="text-primary hover:underline font-medium">
                         публичной оферты
                       </Link>
+                      {' '}и{' '}
+                      <Link to="/privacy" className="text-primary hover:underline font-medium">
+                        политики конфиденциальности
+                      </Link>
                     </label>
                   </div>
                 </CardContent>
