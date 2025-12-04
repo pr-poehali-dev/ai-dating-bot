@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import Icon from '@/components/ui/icon';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Link } from 'react-router-dom';
 import ChatInterface from '@/components/ChatInterface';
 
 interface Girl {
@@ -98,6 +100,7 @@ const Index = ({ userData, onLogout }: IndexProps) => {
   const [selectedGirl, setSelectedGirl] = useState<Girl | null>(null);
   const [showChat, setShowChat] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [userSubscription, setUserSubscription] = useState<{
     flirt: boolean;
     intimate: boolean;
@@ -537,6 +540,25 @@ const Index = ({ userData, onLogout }: IndexProps) => {
                 </p>
               </div>
 
+              <Card className="mb-6 bg-muted/30">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <Checkbox 
+                      id="terms" 
+                      checked={agreedToTerms}
+                      onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
+                      className="mt-1"
+                    />
+                    <label htmlFor="terms" className="text-sm leading-relaxed cursor-pointer">
+                      Я ознакомился и согласен с условиями{' '}
+                      <Link to="/offer" className="text-primary hover:underline font-medium">
+                        публичной оферты
+                      </Link>
+                    </label>
+                  </div>
+                </CardContent>
+              </Card>
+
               <div className="grid md:grid-cols-2 gap-6 mb-8">
                 <Card className="border-2 border-primary">
                   <CardContent className="p-6">
@@ -573,7 +595,7 @@ const Index = ({ userData, onLogout }: IndexProps) => {
                       className="w-full" 
                       size="lg"
                       onClick={() => handleSubscribe('flirt', 490)}
-                      disabled={isProcessingPayment}
+                      disabled={isProcessingPayment || !agreedToTerms}
                     >
                       {isProcessingPayment ? 'Обработка...' : 'Оформить подписку'}
                     </Button>
@@ -616,7 +638,7 @@ const Index = ({ userData, onLogout }: IndexProps) => {
                       size="lg" 
                       variant="secondary"
                       onClick={() => handleSubscribe('intimate', 1490)}
-                      disabled={isProcessingPayment}
+                      disabled={isProcessingPayment || !agreedToTerms}
                     >
                       {isProcessingPayment ? 'Обработка...' : 'Оформить подписку'}
                     </Button>
@@ -630,14 +652,14 @@ const Index = ({ userData, onLogout }: IndexProps) => {
                     Разовые покупки
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4">
-                    <div className="bg-card p-4 rounded-lg cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSubscribe('one_girl', 399)}>
+                    <div className={`bg-card p-4 rounded-lg transition-colors ${agreedToTerms ? 'cursor-pointer hover:bg-muted/50' : 'opacity-50 cursor-not-allowed'}`} onClick={() => agreedToTerms && handleSubscribe('one_girl', 399)}>
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-medium">Одна девушка на 24 часа</span>
                         <Badge>399₽</Badge>
                       </div>
                       <p className="text-sm text-muted-foreground">Режим интим с одной девушкой на выбор ровно на сутки</p>
                     </div>
-                    <div className="bg-card p-4 rounded-lg cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSubscribe('all_girls', 799)}>
+                    <div className={`bg-card p-4 rounded-lg transition-colors ${agreedToTerms ? 'cursor-pointer hover:bg-muted/50' : 'opacity-50 cursor-not-allowed'}`} onClick={() => agreedToTerms && handleSubscribe('all_girls', 799)}>
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-medium">Все девушки на 1 день</span>
                         <Badge>799₽</Badge>
