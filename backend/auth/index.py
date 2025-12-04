@@ -348,13 +348,35 @@ def handle_check_subscription(params: Dict[str, str]) -> Dict[str, Any]:
                 result['purchased_girls'].append(girl_id)
         
         cur.execute(
-            "SELECT total_messages FROM t_p77610913_ai_dating_bot.user_message_stats WHERE user_id = %s",
+            "SELECT total_messages, last_reset_date FROM t_p77610913_ai_dating_bot.user_message_stats WHERE user_id = %s",
             (user_id,)
         )
         message_stats = cur.fetchone()
-        result['total_messages'] = message_stats[0] if message_stats else 0
         
-        if result['intimate']:
+        if message_stats:
+            total_messages = message_stats[0]
+            last_reset = message_stats[1]
+            
+            if last_reset and last_reset.date() < datetime.now().date():
+                cur.execute(
+                    "UPDATE t_p77610913_ai_dating_bot.user_message_stats SET total_messages = 0, last_reset_date = CURRENT_DATE WHERE user_id = %s",
+                    (user_id,)
+                )
+                conn.commit()
+                total_messages = 0
+            
+            result['total_messages'] = total_messages
+        else:
+            result['total_messages'] = 0
+        
+        cur.execute(
+            "SELECT purchase_type, girl_id, expires_at FROM t_p77610913_ai_dating_bot.purchases WHERE user_id = %s AND expires_at > CURRENT_TIMESTAMP",
+            (user_id,)
+        )
+        active_purchases = cur.fetchall()
+        has_active_purchase = len(active_purchases) > 0
+        
+        if result['intimate'] or has_active_purchase:
             result['message_limit'] = None
             result['can_send_message'] = True
         elif result['flirt']:

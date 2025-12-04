@@ -85,15 +85,31 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             
             if user_id and plan_type:
                 if plan_type in ['flirt', 'intimate']:
-                    end_date = datetime.now() + timedelta(days=30)
+                    end_date = datetime.now() + timedelta(days=7)
+                    flirt_enabled = True
+                    intimate_enabled = (plan_type == 'intimate')
+                    
                     cur.execute(
-                        "INSERT INTO t_p77610913_ai_dating_bot.subscriptions (user_id, subscription_type, end_date) VALUES (%s, %s, %s)",
-                        (user_id, plan_type, end_date)
+                        "SELECT id FROM t_p77610913_ai_dating_bot.subscriptions WHERE user_id = %s",
+                        (user_id,)
                     )
+                    existing = cur.fetchone()
+                    
+                    if existing:
+                        cur.execute(
+                            "UPDATE t_p77610913_ai_dating_bot.subscriptions SET subscription_type = %s, end_date = %s, flirt = %s, intimate = %s, is_active = TRUE WHERE user_id = %s",
+                            (plan_type, end_date, flirt_enabled, intimate_enabled, user_id)
+                        )
+                    else:
+                        cur.execute(
+                            "INSERT INTO t_p77610913_ai_dating_bot.subscriptions (user_id, subscription_type, end_date, flirt, intimate, is_active) VALUES (%s, %s, %s, %s, %s, TRUE)",
+                            (user_id, plan_type, end_date, flirt_enabled, intimate_enabled)
+                        )
                 elif plan_type in ['one_girl', 'all_girls']:
+                    expires_at = datetime.now() + timedelta(hours=24)
                     cur.execute(
-                        "INSERT INTO t_p77610913_ai_dating_bot.purchases (user_id, purchase_type, girl_id) VALUES (%s, %s, %s)",
-                        (user_id, plan_type, girl_id)
+                        "INSERT INTO t_p77610913_ai_dating_bot.purchases (user_id, purchase_type, girl_id, expires_at) VALUES (%s, %s, %s, %s)",
+                        (user_id, plan_type, girl_id, expires_at)
                     )
         
         conn.commit()

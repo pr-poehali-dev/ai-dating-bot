@@ -114,10 +114,10 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         }
     
     plan_descriptions = {
-        'flirt': 'Подписка "Флирт" на 1 месяц',
-        'intimate': 'Подписка "Интим" на 1 месяц',
-        'one_girl': f'Разблокировка одной девушки (NSFW)',
-        'all_girls': 'Разблокировка всех девушек (NSFW)'
+        'flirt': 'Подписка "Флирт" на 1 неделю - 50 сообщений в день',
+        'intimate': 'Подписка "Интим" на 1 неделю - безлимитные сообщения',
+        'one_girl': 'Одна девушка на 24 часа - режим интим',
+        'all_girls': 'Все девушки на 24 часа - режим интим'
     }
     
     description = plan_descriptions.get(plan_type, 'AI Romance подписка')
