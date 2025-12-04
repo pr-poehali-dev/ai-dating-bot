@@ -115,7 +115,7 @@ const ProfilePage = ({ userData, onLogout }: ProfilePageProps) => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="mb-6">
           <CardHeader>
             <CardTitle>Настройки аккаунта</CardTitle>
           </CardHeader>
@@ -144,6 +144,54 @@ const ProfilePage = ({ userData, onLogout }: ProfilePageProps) => {
               <Icon name="LogOut" size={20} className="mr-3" />
               Выйти из аккаунта
             </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Контакты</CardTitle>
+            <CardDescription>Информация о сервисе и поддержке</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-start gap-3">
+                <Icon name="Mail" size={18} className="text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">Почта</p>
+                  <a href="mailto:1ilyapetrov@vk.com" className="text-sm text-primary hover:underline">1ilyapetrov@vk.com</a>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Icon name="MessageCircle" size={18} className="text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">Поддержка в Telegram</p>
+                  <a href="https://t.me/petrovboxing" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">@petrovboxing</a>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Icon name="Phone" size={18} className="text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">Телефон</p>
+                  <a href="tel:+79614009996" className="text-sm text-primary hover:underline">+7 961 400-99-96</a>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Icon name="MapPin" size={18} className="text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">Почтовый адрес</p>
+                  <p className="text-sm text-muted-foreground">58383948854</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t space-y-2">
+              <p className="text-xs font-medium text-muted-foreground">Реквизиты</p>
+              <p className="text-sm">ИП Петров Илья Дмитриевич</p>
+              <p className="text-sm text-muted-foreground">ИНН: 616809818160</p>
+            </div>
           </CardContent>
         </Card>
       </div>
