@@ -376,6 +376,10 @@ def handle_check_subscription(params: Dict[str, str]) -> Dict[str, Any]:
         active_purchases = cur.fetchall()
         has_active_purchase = len(active_purchases) > 0
         
+        if active_purchases:
+            result['purchase_type'] = active_purchases[0][0]
+            result['purchase_expires'] = active_purchases[0][2].isoformat()
+        
         if result['intimate'] or has_active_purchase:
             result['message_limit'] = None
             result['can_send_message'] = True

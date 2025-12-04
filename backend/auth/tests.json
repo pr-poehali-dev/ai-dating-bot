@@ -1,19 +1,13 @@
 {
   "tests": [
     {
-      "name": "Test user registration",
-      "method": "POST",
-      "path": "/",
-      "body": {
-        "action": "register",
-        "email": "newuser@test.com",
-        "password": "testpass123",
-        "name": "Test User"
-      },
+      "name": "Test subscription check",
+      "method": "GET",
+      "path": "/?subscription=true&user_id=test_user_123",
       "expectedStatus": 200,
       "expectedBody": {
-        "success": true,
-        "token": "string"
+        "user_id": "test_user_123",
+        "flirt": false
       },
       "bodyMatcher": "partial"
     },

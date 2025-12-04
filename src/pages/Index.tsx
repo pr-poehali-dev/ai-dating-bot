@@ -107,6 +107,9 @@ const Index = ({ userData, onLogout }: IndexProps) => {
     total_messages?: number;
     message_limit?: number | null;
     can_send_message?: boolean;
+    subscription_end?: string;
+    purchase_expires?: string;
+    purchase_type?: string;
   }>(userData?.subscription || { flirt: false, intimate: false });
   const userId = userData?.user_id || 'user_' + Date.now();
   const [girlStats, setGirlStats] = useState<Record<string, { total_messages: number; relationship_level: number }>>({});
@@ -125,6 +128,9 @@ const Index = ({ userData, onLogout }: IndexProps) => {
         total_messages: data.total_messages || 0,
         message_limit: data.message_limit,
         can_send_message: data.can_send_message !== undefined ? data.can_send_message : true,
+        subscription_end: data.subscription_end,
+        purchase_expires: data.purchase_expires,
+        purchase_type: data.purchase_type,
       });
       
       return data;
@@ -447,21 +453,58 @@ const Index = ({ userData, onLogout }: IndexProps) => {
                     </Button>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-muted rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Icon name="MessageCircle" size={20} className="text-primary" />
-                        <span className="text-sm text-muted-foreground">Всего сообщений</span>
-                      </div>
-                      <p className="text-2xl font-bold">57</p>
+                  <div className="bg-muted rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Icon name="Crown" size={20} className="text-primary" />
+                      <span className="font-medium">Статус подписки</span>
                     </div>
-                    <div className="bg-muted rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Icon name="Heart" size={20} className="text-accent" />
-                        <span className="text-sm text-muted-foreground">Активные диалоги</span>
+                    {userSubscription.flirt || userSubscription.intimate ? (
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">Тип:</span>
+                          <Badge variant={userSubscription.intimate ? "default" : "secondary"}>
+                            {userSubscription.intimate ? "Интим" : "Флирт"}
+                          </Badge>
+                        </div>
+                        {userSubscription.subscription_end && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-muted-foreground">Действует до:</span>
+                            <span className="text-sm font-medium">
+                              {new Date(userSubscription.subscription_end).toLocaleDateString('ru-RU', { 
+                                day: 'numeric', 
+                                month: 'long',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </span>
+                          </div>
+                        )}
                       </div>
-                      <p className="text-2xl font-bold">2</p>
-                    </div>
+                    ) : userSubscription.purchase_expires && userSubscription.purchase_type ? (
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">Разовая покупка:</span>
+                          <Badge variant="secondary">
+                            {userSubscription.purchase_type === 'one_girl' ? 'Одна девушка' : 'Все девушки'}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">Осталось времени:</span>
+                          <span className="text-sm font-medium text-primary">
+                            {(() => {
+                              const now = new Date();
+                              const expires = new Date(userSubscription.purchase_expires);
+                              const diff = expires.getTime() - now.getTime();
+                              const hours = Math.floor(diff / (1000 * 60 * 60));
+                              const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                              return `${hours}ч ${minutes}м`;
+                            })()}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">Подписка отсутствует</p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
