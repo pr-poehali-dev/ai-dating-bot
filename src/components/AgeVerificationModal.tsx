@@ -1,23 +1,14 @@
-import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 
-const AgeVerificationModal = () => {
-  const [isVisible, setIsVisible] = useState(false);
+interface AgeVerificationModalProps {
+  onConfirm: () => void;
+}
 
-  useEffect(() => {
-    const hasVerified = localStorage.getItem('age_verified');
-    if (!hasVerified) {
-      setIsVisible(true);
-    }
-  }, []);
-
-  const handleConfirm = () => {
-    localStorage.setItem('age_verified', 'true');
-    setIsVisible(false);
+const AgeVerificationModal = ({ onConfirm }: AgeVerificationModalProps) => {
+  const handleExit = () => {
+    window.location.href = 'https://www.google.com';
   };
-
-  if (!isVisible) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm">
@@ -42,13 +33,24 @@ const AgeVerificationModal = () => {
             </p>
           </div>
 
-          <Button
-            onClick={handleConfirm}
-            className="w-full h-12 text-base font-semibold"
-            size="lg"
-          >
-            Мне есть 18 лет
-          </Button>
+          <div className="space-y-3">
+            <Button
+              onClick={onConfirm}
+              className="w-full h-12 text-base font-semibold"
+              size="lg"
+            >
+              Мне есть 18 лет
+            </Button>
+            
+            <Button
+              onClick={handleExit}
+              variant="outline"
+              className="w-full h-12 text-base font-semibold"
+              size="lg"
+            >
+              Выход
+            </Button>
+          </div>
         </div>
       </div>
     </div>

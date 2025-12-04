@@ -17,9 +17,16 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [userData, setUserData] = useState<any>(null);
+  const [ageVerified, setAgeVerified] = useState(false);
 
   useEffect(() => {
-    checkAuth();
+    const hasVerified = localStorage.getItem('age_verified');
+    if (hasVerified) {
+      setAgeVerified(true);
+      checkAuth();
+    } else {
+      setIsCheckingAuth(false);
+    }
   }, []);
 
   const checkAuth = async () => {
@@ -70,6 +77,16 @@ const App = () => {
     setUserData(null);
   };
 
+  const handleAgeVerification = () => {
+    localStorage.setItem('age_verified', 'true');
+    setAgeVerified(true);
+    checkAuth();
+  };
+
+  if (!ageVerified) {
+    return <AgeVerificationModal onConfirm={handleAgeVerification} />;
+  }
+
   if (isCheckingAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -90,7 +107,6 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <AgeVerificationModal />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index userData={userData} onLogout={handleLogout} />} />
